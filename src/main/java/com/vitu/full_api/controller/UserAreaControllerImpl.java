@@ -1,0 +1,39 @@
+package com.vitu.full_api.controller;
+
+
+
+import com.vitu.full_api.dto.request.ChangePassword;
+import com.vitu.full_api.dto.response.UserDTO;
+import com.vitu.full_api.entity.User;
+import com.vitu.full_api.service.serviceAction.UserAreaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@RequiredArgsConstructor
+// Faz com que quando a classe for instanciada, os atributos vão ser passados no construtor automaticamente.
+@RestController   // Identificando  que é um rest-controller
+@RequestMapping(value = "/userarea")   // Recurso para "encontrar" esse controller
+@Primary // Essa vai ser a implementação a ser carregada caso tenha mais de 1.
+public class UserAreaControllerImpl implements UserAreaController { // Controller onde os usuários interagem, (ÁREA DO USUÁRIO)
+
+    private final UserAreaService userAreaService;  // Service onde terá a lógica relacionada a área do usuário no sistema.
+
+    @Override
+    @GetMapping(value = "/myprofile") // Método HTTP GET -> Obter / Recuperar
+    public ResponseEntity<UserDTO> myProfile(User userLogged) {  ///Método para visualizar "area do usuário" no sistema, ver dados do usuário logado.
+        return ResponseEntity.ok().body(userAreaService.myProfile(userLogged));
+    }
+
+    @Override
+    @PutMapping(value = "/changepassword") // Método HTTP PUT - > ALTERAR / UPDATE
+    public ResponseEntity<String> changePassword(ChangePassword cpDTO, User userLogged) {  // Método para alterar a senha da conta no sistema.
+        return ResponseEntity.ok().body(userAreaService.changePassword(cpDTO, userLogged));
+    }
+
+}

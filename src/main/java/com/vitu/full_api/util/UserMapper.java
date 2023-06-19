@@ -1,0 +1,46 @@
+package com.vitu.full_api.util;
+
+
+import com.vitu.full_api.dto.request.RegisterUserDTO;
+import com.vitu.full_api.dto.response.RoleDTO;
+import com.vitu.full_api.dto.response.UserDTO;
+import com.vitu.full_api.dto.response.UserMonitoringDTO;
+import com.vitu.full_api.entity.Role;
+import com.vitu.full_api.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
+public class UserMapper { // Classe para fazer algumas conversões de DTO para User e User para DTO.
+
+    public static User toUserEntity(RegisterUserDTO registerData, PasswordEncoder encoder) {
+
+        return User.builder()
+                .nickname(registerData.getNickname())
+                .email(registerData.getEmail())
+                .password(encoder.encode(registerData.getPassword())) // encoder --> codifica a senha ( mais informações na declaração do método).
+                .build();  // -> Utilizado um builder na contrução do objeto pois é mais légivel e evita passar parametros errados.
+
+    }
+
+    public static UserDTO toUserDTO(User user) { // Converte uma entidade usuário em usuário DTO.
+        return new UserDTO(user);
+    }
+
+    public static UserMonitoringDTO toUserMonitoringDTO(User user) { // Converte uma entidade usuário em Usuário DTO de monitoramento.
+        return new UserMonitoringDTO(user);
+    }
+
+    public static Page<UserMonitoringDTO> toUserMonitoringDTO(Page<User> users) { // Método converte uma página de usuários (entidade) para uma página de usuários DTO.
+        return users.map(UserMonitoringDTO::new); // Convertendo de entidade para DTO cada elemento da lista e retornando essa nova lista DTO.
+    }
+
+    public static List<RoleDTO> toRoleDTO(List<Role> roles) {   // Método para converter uma lista de Role para RoleDTO
+        return roles.stream().map(RoleDTO::new).collect(Collectors.toList());
+    }
+
+}
